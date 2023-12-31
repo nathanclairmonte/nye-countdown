@@ -9,7 +9,7 @@ const Layout = ({ children, ...customMeta }) => {
     const meta = {
         title: "NYE Countdown",
         description: "Counting down to the New Year!",
-        image: "/preview.png", // remember to add our own here
+        image: "https://www.nyecount.com/preview.png", // remember to add our own here
         type: "website",
         ...customMeta,
     };
