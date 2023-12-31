@@ -35,7 +35,7 @@ const Layout = ({ children, ...customMeta }) => {
                 {meta.date && <meta property="article:published_time" content={meta.date} />}
             </Head>
             <main
-                className="flex h-screen w-full flex-col justify-between bg-black"
+                className="flex h-dvh w-full flex-col justify-between bg-black"
                 suppressHydrationWarning
             >
                 <div className="h-full">{children}</div>
