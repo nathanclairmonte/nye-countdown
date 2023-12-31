@@ -11,7 +11,7 @@ const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
 
 export default function Home() {
     const newYearDate = "2024-01-01T00:00:00";
-    // const newYearDate = "2023-12-31T18:04:00";
+    // const newYearDate = "2023-12-31T18:28:00";
     const calculateTimeLeft = (targetDate) => {
         const difference = +new Date(targetDate) - +new Date();
         let timeLeft = {};

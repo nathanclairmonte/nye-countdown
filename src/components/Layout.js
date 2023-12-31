@@ -8,8 +8,8 @@ const Layout = ({ children, ...customMeta }) => {
 
     const meta = {
         title: "NYE Countdown",
-        description: `Count down to the new year!`,
-        image: "/avatar.png", // remember to add our own here
+        description: "Counting down to the New Year!",
+        image: "/preview.png", // remember to add our own here
         type: "website",
         ...customMeta,
     };
