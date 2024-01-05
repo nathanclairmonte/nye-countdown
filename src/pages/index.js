@@ -28,10 +28,11 @@ export default function Home() {
     useEffect(() => {
         const timer = setInterval(() => {
             if (!isCustomCountdown) {
-                // if not a custom countdown, use update timeLeft normally
+                // if not a custom countdown, update timeLeft normally
                 const newTimeLeft = calculateTimeLeftInYear(TIMEZONE); // TODO: make timezone dynamic
                 setTimeLeft(newTimeLeft);
 
+                // check if countdown is at zero and set isCelebration to true if it is
                 if (
                     newTimeLeft.months === 0 &&
                     newTimeLeft.days === 0 &&
@@ -56,104 +57,11 @@ export default function Home() {
 
         // render celebration if isCelebration is true
         if (isCelebration) {
-            return (
-                <div
-                    className={clsx(
-                        "animate-bounce text-3xl text-green-400 sm:text-5xl md:text-6xl lg:text-7xl",
-                        roboto.className
-                    )}
-                >
-                    Happy New Year!!! 🎉🎊
-                </div>
-            );
+            return <Celebration />;
         }
-
-        // styles for countdown rendering
-        // making sure it sizes correctly on various screen sizes
-        let styleClass =
-            "text-[0.6rem] min-[320px]:text-xs min-[377px]:text-sm sm:text-lg md:text-2xl text-gray-50 text-center";
-        if (timeLeft.months === 0 && timeLeft.days > 0) {
-            styleClass =
-                "text-xs min-[320px]:text-sm min-[390px]:text-base sm:text-lg md:text-xl text-gray-50";
-        } else if (timeLeft.months === 0 && timeLeft.days === 0 && timeLeft.hours > 0) {
-            styleClass =
-                "text-sm min-[320px]:text-base min-[390px]:text-xl sm:text-2xl md:text-3xl text-gray-50";
-        } else if (
-            timeLeft.months === 0 &&
-            timeLeft.days === 0 &&
-            timeLeft.hours === 0 &&
-            timeLeft.minutes > 0
-        ) {
-            styleClass = "text-xl min-[390px]:text-3xl sm:text-5xl md:text-6xl text-gray-50";
-        } else if (
-            timeLeft.months === 0 &&
-            timeLeft.days === 0 &&
-            timeLeft.hours === 0 &&
-            timeLeft.minutes === 0 &&
-            timeLeft.seconds > 0
-        ) {
-            styleClass = "text-[12rem] sm:text-[14rem] md:text-[17rem] text-gray-50";
-        }
-
-        // pluralize helper function
-        const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
 
         // render countdown
-        return (
-            <div className={`countdown ${styleClass} ${gothic.className}`}>
-                {timeLeft.months > 0 && (
-                    <span>
-                        {timeLeft.months} {pluralize(timeLeft.months, "month")}
-                        {timeLeft.months > 0 &&
-                        timeLeft.days == 0 &&
-                        timeLeft.hours == 0 &&
-                        timeLeft.minutes == 0 &&
-                        timeLeft.seconds == 0
-                            ? " "
-                            : ", "}
-                    </span>
-                )}
-                {timeLeft.days > 0 && (
-                    <span>
-                        {timeLeft.days} {pluralize(timeLeft.days, "day")}
-                        {timeLeft.days > 0 &&
-                        timeLeft.hours == 0 &&
-                        timeLeft.minutes == 0 &&
-                        timeLeft.seconds == 0
-                            ? " "
-                            : ", "}
-                    </span>
-                )}
-                {timeLeft.hours > 0 && (
-                    <span>
-                        {timeLeft.hours} {pluralize(timeLeft.hours, "hour")}
-                        {timeLeft.hours > 0 && timeLeft.minutes == 0 && timeLeft.seconds == 0
-                            ? " "
-                            : ", "}
-                    </span>
-                )}
-                {timeLeft.minutes > 0 && (
-                    <span>
-                        {timeLeft.minutes} {pluralize(timeLeft.minutes, "minute")}
-                        {timeLeft.minutes > 0 && timeLeft.seconds == 0 ? " " : ", "}
-                    </span>
-                )}
-                {timeLeft.seconds > 0 && (
-                    <span>
-                        {timeLeft.months === 0 &&
-                        timeLeft.days === 0 &&
-                        timeLeft.hours === 0 &&
-                        timeLeft.minutes === 0 ? (
-                            <>{timeLeft.seconds}</>
-                        ) : (
-                            <>
-                                {timeLeft.seconds} {pluralize(timeLeft.seconds, "second")}
-                            </>
-                        )}
-                    </span>
-                )}
-            </div>
-        );
+        return <Countdown timeLeft={timeLeft} />;
     };
 
     return (
@@ -168,5 +76,109 @@ export default function Home() {
                 />
             </div>
         </Layout>
+    );
+}
+
+function Celebration() {
+    return (
+        <div
+            className={clsx(
+                "animate-bounce text-3xl text-green-400 sm:text-5xl md:text-6xl lg:text-7xl",
+                roboto.className
+            )}
+        >
+            Happy New Year!!! 🎉🎊
+        </div>
+    );
+}
+
+const getCountdownStyles = (timeLeft) => {
+    let styleClass =
+        "text-[0.6rem] min-[320px]:text-xs min-[377px]:text-sm sm:text-lg md:text-2xl text-gray-50 text-center";
+    if (timeLeft.months === 0 && timeLeft.days > 0) {
+        styleClass =
+            "text-xs min-[320px]:text-sm min-[390px]:text-base sm:text-lg md:text-xl text-gray-50";
+    } else if (timeLeft.months === 0 && timeLeft.days === 0 && timeLeft.hours > 0) {
+        styleClass =
+            "text-sm min-[320px]:text-base min-[390px]:text-xl sm:text-2xl md:text-3xl text-gray-50";
+    } else if (
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes > 0
+    ) {
+        styleClass = "text-xl min-[390px]:text-3xl sm:text-5xl md:text-6xl text-gray-50";
+    } else if (
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes === 0 &&
+        timeLeft.seconds > 0
+    ) {
+        styleClass = "text-[12rem] sm:text-[14rem] md:text-[17rem] text-gray-50";
+    }
+
+    return styleClass;
+};
+
+function Countdown({ timeLeft }) {
+    const styleClass = getCountdownStyles(timeLeft);
+
+    // pluralize helper function
+    const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
+    return (
+        <div className={`${styleClass} ${gothic.className}`}>
+            {timeLeft.months > 0 && (
+                <span>
+                    {timeLeft.months} {pluralize(timeLeft.months, "month")}
+                    {timeLeft.months > 0 &&
+                    timeLeft.days == 0 &&
+                    timeLeft.hours == 0 &&
+                    timeLeft.minutes == 0 &&
+                    timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.days > 0 && (
+                <span>
+                    {timeLeft.days} {pluralize(timeLeft.days, "day")}
+                    {timeLeft.days > 0 &&
+                    timeLeft.hours == 0 &&
+                    timeLeft.minutes == 0 &&
+                    timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.hours > 0 && (
+                <span>
+                    {timeLeft.hours} {pluralize(timeLeft.hours, "hour")}
+                    {timeLeft.hours > 0 && timeLeft.minutes == 0 && timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.minutes > 0 && (
+                <span>
+                    {timeLeft.minutes} {pluralize(timeLeft.minutes, "minute")}
+                    {timeLeft.minutes > 0 && timeLeft.seconds == 0 ? " " : ", "}
+                </span>
+            )}
+            {timeLeft.seconds > 0 && (
+                <span>
+                    {timeLeft.months === 0 &&
+                    timeLeft.days === 0 &&
+                    timeLeft.hours === 0 &&
+                    timeLeft.minutes === 0 ? (
+                        <>{timeLeft.seconds}</>
+                    ) : (
+                        <>
+                            {timeLeft.seconds} {pluralize(timeLeft.seconds, "second")}
+                        </>
+                    )}
+                </span>
+            )}
+        </div>
     );
 }
