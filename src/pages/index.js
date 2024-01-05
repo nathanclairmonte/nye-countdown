@@ -37,7 +37,7 @@ export default function Home() {
                     newTimeLeft.days === 0 &&
                     newTimeLeft.hours === 0 &&
                     newTimeLeft.minutes === 0 &&
-                    newTimeLeft.seconds === 1
+                    newTimeLeft.seconds === 0
                 ) {
                     setIsCelebration(true);
                 }
