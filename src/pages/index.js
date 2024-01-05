@@ -48,35 +48,6 @@ export default function Home() {
         return () => clearInterval(timer);
     }, []);
 
-    // // useEffect to update timeLeft every second
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         setTimeLeft((prevTimeLeft) => {
-    //             if (
-    //                 prevTimeLeft.seconds > 1 ||
-    //                 prevTimeLeft.minutes > 0 ||
-    //                 prevTimeLeft.hours > 0
-    //             ) {
-    //                 const totalSeconds =
-    //                     prevTimeLeft.hours * 3600 +
-    //                     prevTimeLeft.minutes * 60 +
-    //                     prevTimeLeft.seconds -
-    //                     1;
-    //                 return {
-    //                     hours: Math.floor(totalSeconds / 3600),
-    //                     minutes: Math.floor((totalSeconds % 3600) / 60),
-    //                     seconds: totalSeconds % 60,
-    //                 };
-    //             } else {
-    //                 setIsCelebration(true);
-    //                 return prevTimeLeft;
-    //             }
-    //         });
-    //     }, 1000);
-
-    //     return () => clearTimeout(timer);
-    // }, [timeLeft]);
-
     const renderCountdown = () => {
         // don't render countdown if client hasn't mounted
         if (!isClient) return null;
@@ -102,6 +73,7 @@ export default function Home() {
         // } else if (timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds > 0) {
         //     styleClass = "text-[12rem] sm:text-[14rem] md:text-[17rem] text-gray-50";
         // }
+
         let styleClass = "text-xl sm:text-3xl md:text-5xl text-gray-50";
         // if (timeLeft.months === 0 && timeLeft.days > 0) {
         //     styleClass = "";
