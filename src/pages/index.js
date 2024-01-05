@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fireworksOptions } from "@/data/fireworksOptions";
 import { DotGothic16, Roboto } from "next/font/google";
+import { calculateTimeLeft } from "@/lib/utils";
 
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
@@ -9,25 +10,11 @@ import clsx from "clsx";
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
 
+const NEW_YEAR_DATE = "2025-01-01T00:00:00";
+// const NEW_YEAR_DATE = "2023-12-31T18:28:00";
+
 export default function Home() {
-    const newYearDate = "2024-01-01T00:00:00";
-    // const newYearDate = "2023-12-31T18:28:00";
-    const calculateTimeLeft = (targetDate) => {
-        const difference = +new Date(targetDate) - +new Date();
-        let timeLeft = {};
-
-        if (difference > 0) {
-            timeLeft = {
-                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((difference / 1000 / 60) % 60),
-                seconds: Math.floor((difference / 1000) % 60),
-            };
-        }
-
-        return timeLeft;
-    };
-
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(newYearDate));
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(NEW_YEAR_DATE));
     const [isCelebration, setIsCelebration] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
@@ -135,7 +122,83 @@ export default function Home() {
             {isCelebration && <Fireworks options={fireworksOptions} style={fireworksStyles} />}
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
                 {renderCountdown()}
+                <TestControls setTimeLeft={setTimeLeft} setIsCelebration={setIsCelebration} />
             </div>
         </Layout>
+    );
+}
+
+function TestControls({ setTimeLeft, setIsCelebration }) {
+    const [customHours, setCustomHours] = useState(null);
+    const [customMinutes, setCustomMinutes] = useState(null);
+    const [customSeconds, setCustomSeconds] = useState(null);
+
+    const handleCustomTimeChange = () => {
+        setTimeLeft({
+            hours: parseInt(customHours, 10) || 0,
+            minutes: parseInt(customMinutes, 10) || 0,
+            seconds: parseInt(customSeconds, 10) || 0,
+        });
+        setIsCelebration(false);
+    };
+
+    const resetToLiveCountdown = () => {
+        setTimeLeft(calculateTimeLeft(NEW_YEAR_DATE));
+        setIsCelebration(false);
+        setCustomHours(null);
+        setCustomMinutes(null);
+        setCustomSeconds(null);
+    };
+
+    return (
+        <>
+            <div>
+                <input
+                    type="number"
+                    className="mr-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
+                    placeholder="Hours"
+                    value={customHours}
+                    onChange={(e) => setCustomHours(e.target.value)}
+                />
+                <input
+                    type="number"
+                    className="mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
+                    placeholder="Minutes"
+                    value={customMinutes}
+                    onChange={(e) => setCustomMinutes(e.target.value)}
+                />
+                <input
+                    type="number"
+                    className="ml-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
+                    placeholder="Seconds"
+                    value={customSeconds}
+                    onChange={(e) => setCustomSeconds(e.target.value)}
+                />
+                <button
+                    className="ml-4 mt-4 rounded bg-blue-500 px-4 py-2 text-xl text-white"
+                    onClick={handleCustomTimeChange}
+                >
+                    Start Custom Countdown
+                </button>
+            </div>
+            <button
+                className="mt-4 rounded bg-green-500 px-4 py-2 text-xl text-white"
+                onClick={resetToLiveCountdown}
+            >
+                Reset to Live Countdown
+            </button>
+            <button
+                className="mt-4 rounded bg-green-500 px-4 py-2 text-xl text-white"
+                onClick={() => setIsCelebration(true)}
+            >
+                Start Fireworks
+            </button>
+            <button
+                className="mt-4 rounded bg-red-500 px-4 py-2 text-xl text-white"
+                onClick={() => setIsCelebration(false)}
+            >
+                Stop Fireworks
+            </button>
+        </>
     );
 }
