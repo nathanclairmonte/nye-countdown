@@ -1,32 +1,65 @@
 import { useState } from "react";
-import { calculateTimeLeft } from "@/lib/utils";
-import { NEW_YEAR_DATE } from "@/lib/constants";
+import { calculateTimeLeftInYear } from "@/lib/utils";
+import { TIMEZONE } from "@/lib/constants";
+import { DateTime } from "luxon";
 
-export default function TestControls({ setTimeLeft, setIsCelebration }) {
+export default function TestControls({ setTimeLeft, setIsCelebration, setIsCustomCountdown }) {
+    const [customMonths, setCustomMonths] = useState(null);
+    const [customDays, setCustomDays] = useState(null);
     const [customHours, setCustomHours] = useState(null);
     const [customMinutes, setCustomMinutes] = useState(null);
     const [customSeconds, setCustomSeconds] = useState(null);
 
     const handleCustomTimeChange = () => {
-        setTimeLeft({
-            hours: parseInt(customHours, 10) || 0,
-            minutes: parseInt(customMinutes, 10) || 0,
-            seconds: parseInt(customSeconds, 10) || 0,
-        });
         setIsCelebration(false);
+        setIsCustomCountdown(true);
+        // set a future DateTime object based on user input
+        const futureDateTime = DateTime.local()
+            .setZone(TIMEZONE)
+            .plus({
+                months: parseInt(customMonths, 10) || 0,
+                days: parseInt(customDays, 10) || 0,
+                hours: parseInt(customHours, 10) || 0,
+                minutes: parseInt(customMinutes, 10) || 0,
+                seconds: parseInt(customSeconds, 10) || 0,
+            });
+
+        // set timeLeft based on difference between futureDateTime and now
+        let diff = futureDateTime
+            .diffNow(["months", "days", "hours", "minutes", "seconds"])
+            .toObject();
+        diff = { ...diff, seconds: Math.round(diff.seconds + 0.5) }; // round seconds to nearest whole number, fixes off by 1 second bug
+        setTimeLeft(diff);
     };
 
     const resetToLiveCountdown = () => {
-        setTimeLeft(calculateTimeLeft(NEW_YEAR_DATE));
+        setIsCustomCountdown(false);
+        setTimeLeft(calculateTimeLeftInYear(TIMEZONE));
         setIsCelebration(false);
-        setCustomHours(null);
-        setCustomMinutes(null);
-        setCustomSeconds(null);
+        setCustomMonths("");
+        setCustomDays("");
+        setCustomHours("");
+        setCustomMinutes("");
+        setCustomSeconds("");
     };
 
     return (
         <>
             <div>
+                <input
+                    type="number"
+                    className="mr-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
+                    placeholder="Months"
+                    value={customMonths}
+                    onChange={(e) => setCustomMonths(e.target.value)}
+                />
+                <input
+                    type="number"
+                    className="mr-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
+                    placeholder="Days"
+                    value={customDays}
+                    onChange={(e) => setCustomDays(e.target.value)}
+                />
                 <input
                     type="number"
                     className="mr-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
