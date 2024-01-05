@@ -6,6 +6,7 @@ import { calculateTimeLeft } from "@/lib/utils";
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
 import clsx from "clsx";
+import Image from "next/image";
 
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
@@ -121,10 +122,25 @@ export default function Home() {
         <Layout>
             {isCelebration && <Fireworks options={fireworksOptions} style={fireworksStyles} />}
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
-                {renderCountdown()}
-                <TestControls setTimeLeft={setTimeLeft} setIsCelebration={setIsCelebration} />
+                <ComingSoon />
+                {/* {renderCountdown()} */}
+                {/* <TestControls setTimeLeft={setTimeLeft} setIsCelebration={setIsCelebration} /> */}
             </div>
         </Layout>
+    );
+}
+
+function ComingSoon() {
+    return (
+        <div className="w-full h-full border border-white gap-6 flex flex-col items-center justify-center">
+            <Image
+                src="/cat-sleeping.gif"
+                height={200}
+                width={200}
+                className="bg-zinc-200 rounded-full"
+            />
+            <h1 className={clsx("text-3xl text-zinc-200", gothic.className)}>Coming soon...</h1>
+        </div>
     );
 }
 
