@@ -3,12 +3,11 @@ import { fireworksOptions } from "@/data/fireworksOptions";
 import { DotGothic16, Roboto } from "next/font/google";
 import { calculateTimeLeftInYear, customCountdownSetTimeLeft } from "@/lib/utils";
 
-import { NEW_YEAR_DATE, TIMEZONE } from "@/lib/constants";
+import { TIMEZONE, fireworksStyles } from "@/lib/constants";
 
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
 import clsx from "clsx";
-// import ComingSoon from "@/components/ComingSoon";
 import TestControls from "@/components/TestControls";
 
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
@@ -26,29 +25,6 @@ export default function Home() {
         setIsClient(true);
     }, []);
 
-    // // update timeLeft every second
-    // useEffect(() => {
-    //     const timer = setInterval(() => {
-    //         const newTimeLeft = calculateTimeLeftInYear(TIMEZONE); // TODO: make timezone dynamic
-    //         setTimeLeft(newTimeLeft);
-
-    //         if (
-    //             newTimeLeft.months === 0 &&
-    //             newTimeLeft.days === 0 &&
-    //             newTimeLeft.hours === 0 &&
-    //             newTimeLeft.minutes === 0 &&
-    //             newTimeLeft.seconds === 0
-    //         ) {
-    //             setIsCelebration(true);
-    //         }
-    //         // else {
-    //         //     setIsCelebration(false);
-    //         // }
-    //     }, 1000);
-
-    //     return () => clearInterval(timer);
-    // }, []);
-
     useEffect(() => {
         const timer = setInterval(() => {
             if (!isCustomCountdown) {
@@ -65,9 +41,6 @@ export default function Home() {
                 ) {
                     setIsCelebration(true);
                 }
-                // else {
-                //     setIsCelebration(false);
-                // }
             } else {
                 // handle updating timeLeft for custom countdown
                 customCountdownSetTimeLeft(setTimeLeft, setIsCelebration);
@@ -183,24 +156,14 @@ export default function Home() {
         );
     };
 
-    const fireworksStyles = {
-        left: 0,
-        top: 0,
-        width: "100%",
-        height: "100%",
-        position: "fixed",
-    };
-
     return (
         <Layout>
             {isCelebration && <Fireworks options={fireworksOptions} style={fireworksStyles} />}
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
-                {/* <ComingSoon /> */}
                 {renderCountdown()}
                 <TestControls
                     setTimeLeft={setTimeLeft}
                     setIsCelebration={setIsCelebration}
-                    // isCustomCountdown={isCustomCountdown}
                     setIsCustomCountdown={setIsCustomCountdown}
                 />
             </div>

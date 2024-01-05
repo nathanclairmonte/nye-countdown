@@ -1,23 +1,17 @@
 import { DateTime } from "luxon";
 
-// new calculate time left function, using luxon this time
-// export function calculateTimeLeftInYear(timeZone) {
-//     // get current time, end of year, and start of next year (all in the user's time zone)
-//     const now = DateTime.local().setZone(timeZone);
-//     const endOfYear = DateTime.local().setZone(timeZone).endOf("year");
-//     const startOfNextYear = DateTime.local().setZone(timeZone).startOf("year").plus({ years: 1 });
-
-//     // specifically on Jan 1st, show "Happy New Year" for the whole day
-//     if (now.day === 1 && now.month === 1) {
-//         return startOfNextYear.diff(now, ["days", "hours", "minutes", "seconds"]).toObject();
-//     }
-
-//     // otherwise return time left in year
-//     return endOfYear
-//         .diff(now, ["months", "days", "hours", "minutes", "seconds", "milliseconds"])
-//         .toObject();
-// }
-
+/**
+ *
+ * @param {string (IANA time zone name)} timeZone
+ * @returns {object} time left in year
+ *
+ * This function calculates the time left in the year based on the user's time zone.
+ * It uses Luxon to calculate the difference between now and the end of the year, then
+ * returns the difference as an object with months, days, hours, minutes, and seconds.
+ *
+ * Also, if it's Jan 1st, it returns all zeros so the <Celebration/> component will display
+ * for the whole day that day only, then reset to counting down to the end of the year.
+ */
 export function calculateTimeLeftInYear(timeZone) {
     const now = DateTime.local().setZone(timeZone);
     const endOfYear = DateTime.local().setZone(timeZone).endOf("year");
@@ -42,7 +36,15 @@ export function calculateTimeLeftInYear(timeZone) {
     return diff;
 }
 
-// function to set time left in interval for custom countdown
+/**
+ *
+ * @param {function, useState setter for timeLeft} setTimeLeft
+ * @param {function, useStaet setter for isCelebration} setIsCelebration
+ *
+ * This function is used to update the timeLeft state for a custom countdown.
+ * It takes the current timeLeft and subtracts one second from it, then returns, also setting
+ * isCelebration to true when the countdown hits zero.
+ */
 export function customCountdownSetTimeLeft(setTimeLeft, setIsCelebration) {
     setTimeLeft((prevTimeLeft) => {
         if (
