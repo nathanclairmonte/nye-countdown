@@ -36,30 +36,47 @@ export function calculateTimeLeftInYear(timeZone) {
     } else {
         // otherwise we want time left in year
         diff = endOfYear.diff(now, ["months", "days", "hours", "minutes", "seconds"]).toObject();
-        // round seconds to nearest whole number, fixes off by 1 second bug
-        diff = { ...diff, seconds: Math.round(diff.seconds + 0.5) };
+        diff = { ...diff, seconds: Math.round(diff.seconds + 0.14) }; // round seconds to nearest whole number
     }
 
-    return {
-        months: diff.months,
-        days: diff.days,
-        hours: diff.hours,
-        minutes: diff.minutes,
-        seconds: diff.seconds,
-    };
+    return diff;
 }
 
-export function calculateTimeLeft(targetDate) {
-    const difference = +new Date(targetDate) - +new Date();
-    let timeLeft = {};
+// function to set time left in interval for custom countdown
+export function customCountdownSetTimeLeft(setTimeLeft, setIsCelebration) {
+    setTimeLeft((prevTimeLeft) => {
+        if (
+            prevTimeLeft.seconds > 0 ||
+            prevTimeLeft.minutes > 0 ||
+            prevTimeLeft.hours > 0 ||
+            prevTimeLeft.days > 0 ||
+            prevTimeLeft.months > 0
+        ) {
+            // Calculate the new time left considering the custom countdown
+            const totalSeconds =
+                prevTimeLeft.months * 30 * 24 * 3600 + // Assuming 30 days per month for simplicity
+                prevTimeLeft.days * 24 * 3600 +
+                prevTimeLeft.hours * 3600 +
+                prevTimeLeft.minutes * 60 +
+                prevTimeLeft.seconds -
+                1;
 
-    if (difference > 0) {
-        timeLeft = {
-            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-            minutes: Math.floor((difference / 1000 / 60) % 60),
-            seconds: Math.floor((difference / 1000) % 60),
-        };
-    }
+            // Check if countdown is about to hit zero
+            if (totalSeconds === 0) {
+                setIsCelebration(true);
+                return prevTimeLeft; // Return the current time left to display the last second
+            }
 
-    return timeLeft;
+            return {
+                months: Math.floor(totalSeconds / (30 * 24 * 3600)),
+                days: Math.floor((totalSeconds % (30 * 24 * 3600)) / (24 * 3600)),
+                hours: Math.floor((totalSeconds % (24 * 3600)) / 3600),
+                minutes: Math.floor((totalSeconds % 3600) / 60),
+                seconds: totalSeconds % 60,
+            };
+        }
+        // When countdown finishes
+        setIsCelebration(true);
+        return prevTimeLeft;
+    });
 }
