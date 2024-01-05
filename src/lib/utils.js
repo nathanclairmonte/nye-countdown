@@ -15,6 +15,7 @@ import { DateTime } from "luxon";
 export function calculateTimeLeftInYear(timeZone) {
     const now = DateTime.local().setZone(timeZone);
     const endOfYear = DateTime.local().setZone(timeZone).endOf("year");
+    // const endOfYear = DateTime.fromISO("2024-01-05T17:01");
 
     let diff;
     if (now.day === 1 && now.month === 1) {
@@ -29,8 +30,9 @@ export function calculateTimeLeftInYear(timeZone) {
         };
     } else {
         // otherwise we want time left in year
-        diff = endOfYear.diff(now, ["months", "days", "hours", "minutes", "seconds"]).toObject();
-        diff = { ...diff, seconds: Math.round(diff.seconds + 0.14) }; // round seconds to nearest whole number
+        diff = endOfYear
+            .diff(now, ["months", "days", "hours", "minutes", "seconds", "milliseconds"])
+            .toObject();
     }
 
     return diff;

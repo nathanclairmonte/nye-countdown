@@ -26,9 +26,8 @@ export default function TestControls({ setTimeLeft, setIsCelebration, setIsCusto
 
         // set timeLeft based on difference between futureDateTime and now
         let diff = futureDateTime
-            .diffNow(["months", "days", "hours", "minutes", "seconds"])
+            .diffNow(["months", "days", "hours", "minutes", "seconds", "milliseconds"])
             .toObject();
-        diff = { ...diff, seconds: Math.round(diff.seconds + 0.5) }; // round seconds to nearest whole number, fixes off by 1 second bug
         setTimeLeft(diff);
     };
 
