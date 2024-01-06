@@ -67,7 +67,7 @@ export default function Home() {
         }
 
         // render countdown
-        let tempProgress = 50;
+        let tempProgress = 30;
         return (
             <>
                 {/* <div className="w-full max-w-[571px] flex flex-col gap-2 items-center justify-center">
@@ -205,25 +205,99 @@ function Countdown({ timeLeft }) {
     );
 }
 
-function ProgressBar({ progress }) {
-    return (
-        // // v1, simple styling
-        // <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
-        //     <div className="bg-zinc-200 rounded p-0.5 w-full">
-        //         <div className="h-7 bg-green-500 rounded-l-sm" style={{ width: `${progress}%` }} />
-        //     </div>
-        //     <p className="text-gray-50">{`${progress} %`}</p>
-        // </div>
+// function ProgressBar({ progress }) {
+//     return (
+//         <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
+//             <div className="bg-gray-600 rounded p-0.5 w-full">
+//                 <div className="h-7 bg-green-500 rounded-sm" style={{ width: `${progress}%` }} />
+//             </div>
+//             <p className="text-xl text-gray-50">{`${progress} %`}</p>
+//         </div>
+//     );
+// }
 
-        // v2, more complex styling
-        <div className="w-11/12 rounded-lg max-w-[571px] mx-auto">
-            <div className="bg-gray-600 p-0.5 rounded">
-                <div
-                    className="bg-green-500 h-7 rounded-sm"
-                    style={{ width: `${progress}%` }}
-                ></div>
+// function ProgressBar({ progress }) {
+//     const segmentCount = 30; // For example, 10 segments
+//     const segmentWidth = 100 / segmentCount;
+
+//     // Function to calculate segment widths
+//     const getSegmentWidths = () => {
+//         let widths = [];
+//         let remainingProgress = progress;
+//         for (let i = 0; i < segmentCount; i++) {
+//             let segmentProgress =
+//                 remainingProgress > segmentWidth ? segmentWidth : remainingProgress;
+//             widths.push(segmentProgress);
+//             remainingProgress -= segmentWidth;
+//         }
+//         return widths;
+//     };
+
+//     const segmentWidths = getSegmentWidths();
+
+//     return (
+//         <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
+//             <div className="bg-gray-600 rounded p-0.5 w-full flex">
+//                 {segmentWidths.map((width, index) => (
+//                     <div
+//                         key={index}
+//                         className={clsx("h-7 bg-green-500 rounded-[1px]", {
+//                             "ml-0.5": index > 0,
+//                             "rounded-l-sm": index === 0,
+//                             "rounded-r-sm": index === segmentCount - 1,
+//                         })}
+//                         style={{ width: `${width}%` }}
+//                     />
+//                 ))}
+//             </div>
+//             <p className="text-xl text-gray-50">{`${progress} %`}</p>
+//         </div>
+//     );
+// }
+
+function ProgressBar({ progress }) {
+    const segmentCount = 20;
+    const gapWidth = 0.5; // Assuming this is 0.5% of the total width
+    const totalGapWidth = gapWidth * (segmentCount - 1);
+    const availableWidth = 100 - totalGapWidth;
+    const segmentWidth = availableWidth / segmentCount;
+
+    // Function to calculate segment widths
+    const getSegmentWidths = () => {
+        let widths = [];
+        let accumulatedWidth = 0;
+
+        for (let i = 0; i < segmentCount; i++) {
+            let width = segmentWidth;
+            if (accumulatedWidth + width > progress) {
+                width = progress - accumulatedWidth;
+            }
+            widths.push(width);
+            accumulatedWidth += width + gapWidth;
+            if (accumulatedWidth >= progress) break;
+        }
+
+        return widths;
+    };
+
+    const segmentWidths = getSegmentWidths();
+
+    return (
+        <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
+            <div className="bg-gray-600 rounded p-0.5 w-full flex">
+                {segmentWidths.map((width, index) => (
+                    <div
+                        key={index}
+                        className={clsx("h-7 opacity-90 bg-green-500 rounded-[1px]", {
+                            "ml-0.5": index > 0,
+                            "rounded-l-sm": index === 0,
+                            "rounded-r-sm": index === segmentCount - 1,
+                        })}
+                        style={{ width: `${width}%` }}
+                    />
+                ))}
             </div>
-            <p className="text-green-500 text-xs mt-2 text-center">{progress}%</p>
+            <p className={clsx("text-xl text-gray-50", roboto.className)}>{`${progress}%`}</p>
         </div>
     );
 }
