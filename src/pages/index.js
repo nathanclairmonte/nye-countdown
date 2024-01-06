@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { fireworksOptions } from "@/data/fireworksOptions";
 import { DotGothic16, Roboto } from "next/font/google";
-import { calculateTimeLeftInYear, customCountdownSetTimeLeft } from "@/lib/utils";
+import {
+    calculateTimeLeftInYear,
+    calculatePercentProgressSoFar,
+    customCountdownSetTimeLeft,
+} from "@/lib/utils";
 
 import { TIMEZONE, fireworksStyles } from "@/lib/constants";
 
@@ -18,6 +22,8 @@ export default function Home() {
     const [isCelebration, setIsCelebration] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const [isCustomCountdown, setIsCustomCountdown] = useState(false);
+
+    const progress = calculatePercentProgressSoFar(TIMEZONE);
 
     // set isClient when client mounts
     // this is to handle hydration mismatch, workaround for now
@@ -61,7 +67,21 @@ export default function Home() {
         }
 
         // render countdown
-        return <Countdown timeLeft={timeLeft} />;
+        let tempProgress = 50;
+        return (
+            <>
+                <div className="w-full max-w-[571px] flex flex-col gap-2 items-center justify-center">
+                    <div className="bg-zinc-200 rounded p-0.5 w-full">
+                        <div
+                            className="h-7 bg-green-500 rounded-l-sm"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                    <p className="text-gray-50">{`${progress} %`}</p>
+                </div>
+                <Countdown timeLeft={timeLeft} />
+            </>
+        );
     };
 
     return (
