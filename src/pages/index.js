@@ -81,11 +81,11 @@ export default function Home() {
             {isCelebration && <Fireworks options={fireworksOptions} style={fireworksStyles} />}
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
                 {renderCountdown()}
-                <TestControls
+                {/* <TestControls
                     setTimeLeft={setTimeLeft}
                     setIsCelebration={setIsCelebration}
                     setIsCustomCountdown={setIsCustomCountdown}
-                />
+                /> */}
             </div>
         </Layout>
     );
@@ -194,18 +194,6 @@ function Countdown({ timeLeft }) {
         </div>
     );
 }
-
-// // older version of ProgressBar without segments
-// function ProgressBar({ progress }) {
-//     return (
-//         <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
-//             <div className="bg-gray-600 rounded p-0.5 w-full">
-//                 <div className="h-7 bg-green-500 rounded-sm" style={{ width: `${progress}%` }} />
-//             </div>
-//             <p className="text-xl text-gray-50">{`${progress} %`}</p>
-//         </div>
-//     );
-// }
 
 function ProgressBar({ progress }) {
     const segmentCount = 20;
