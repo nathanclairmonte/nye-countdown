@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fireworksOptions } from "@/data/fireworksOptions";
-import { DotGothic16, Roboto } from "next/font/google";
+import { DotGothic16, Roboto, PT_Mono } from "next/font/google";
 import {
     calculateTimeLeftInYear,
     calculatePercentProgressSoFar,
@@ -16,6 +16,7 @@ import TestControls from "@/components/TestControls";
 
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
+const mono = PT_Mono({ weight: ["400"], subsets: ["latin"] });
 
 export default function Home() {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeftInYear(TIMEZONE));
@@ -66,23 +67,12 @@ export default function Home() {
             return <Celebration />;
         }
 
-        // render countdown
-        let tempProgress = 30;
+        // render progress bar and countdown
         return (
-            <>
-                {/* <div className="w-full max-w-[571px] flex flex-col gap-2 items-center justify-center">
-                    <div className="bg-zinc-200 rounded p-0.5 w-full">
-                        <div
-                            className="h-7 bg-green-500 rounded-l-sm"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-                    <p className="text-gray-50">{`${progress} %`}</p>
-                </div> */}
-                {/* <ProgressBar progress={progress} /> */}
-                <ProgressBar progress={tempProgress} />
+            <div className="relative w-full h-screen flex flex-col items-center justify-center">
+                <ProgressBar progress={progress} />
                 <Countdown timeLeft={timeLeft} />
-            </>
+            </div>
         );
     };
 
@@ -149,7 +139,7 @@ function Countdown({ timeLeft }) {
     // pluralize helper function
     const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
     return (
-        <div className={`${styleClass} ${gothic.className}`}>
+        <div className={`${styleClass} ${gothic.className} absolute bottom-20`}>
             {timeLeft.months > 0 && (
                 <span>
                     {timeLeft.months} {pluralize(timeLeft.months, "month")}
@@ -205,6 +195,7 @@ function Countdown({ timeLeft }) {
     );
 }
 
+// // older version of ProgressBar without segments
 // function ProgressBar({ progress }) {
 //     return (
 //         <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
@@ -216,53 +207,14 @@ function Countdown({ timeLeft }) {
 //     );
 // }
 
-// function ProgressBar({ progress }) {
-//     const segmentCount = 30; // For example, 10 segments
-//     const segmentWidth = 100 / segmentCount;
-
-//     // Function to calculate segment widths
-//     const getSegmentWidths = () => {
-//         let widths = [];
-//         let remainingProgress = progress;
-//         for (let i = 0; i < segmentCount; i++) {
-//             let segmentProgress =
-//                 remainingProgress > segmentWidth ? segmentWidth : remainingProgress;
-//             widths.push(segmentProgress);
-//             remainingProgress -= segmentWidth;
-//         }
-//         return widths;
-//     };
-
-//     const segmentWidths = getSegmentWidths();
-
-//     return (
-//         <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
-//             <div className="bg-gray-600 rounded p-0.5 w-full flex">
-//                 {segmentWidths.map((width, index) => (
-//                     <div
-//                         key={index}
-//                         className={clsx("h-7 bg-green-500 rounded-[1px]", {
-//                             "ml-0.5": index > 0,
-//                             "rounded-l-sm": index === 0,
-//                             "rounded-r-sm": index === segmentCount - 1,
-//                         })}
-//                         style={{ width: `${width}%` }}
-//                     />
-//                 ))}
-//             </div>
-//             <p className="text-xl text-gray-50">{`${progress} %`}</p>
-//         </div>
-//     );
-// }
-
 function ProgressBar({ progress }) {
     const segmentCount = 20;
-    const gapWidth = 0.5; // Assuming this is 0.5% of the total width
+    const gapWidth = 0.35; // ml-0.5 equates to about 0.35% width
     const totalGapWidth = gapWidth * (segmentCount - 1);
     const availableWidth = 100 - totalGapWidth;
     const segmentWidth = availableWidth / segmentCount;
 
-    // Function to calculate segment widths
+    // function to calculate segment widths
     const getSegmentWidths = () => {
         let widths = [];
         let accumulatedWidth = 0;
@@ -281,9 +233,10 @@ function ProgressBar({ progress }) {
     };
 
     const segmentWidths = getSegmentWidths();
+    const formattedProgress = parseFloat(progress).toFixed(1);
 
     return (
-        <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
+        <div className="w-[95%] max-w-[571px] flex flex-col gap-3 items-center justify-center">
             <div className="bg-gray-600 rounded p-0.5 w-full flex">
                 {segmentWidths.map((width, index) => (
                     <div
@@ -291,13 +244,21 @@ function ProgressBar({ progress }) {
                         className={clsx("h-7 opacity-90 bg-green-500 rounded-[1px]", {
                             "ml-0.5": index > 0,
                             "rounded-l-sm": index === 0,
-                            "rounded-r-sm": index === segmentCount - 1,
+                            "rounded-r-sm": index === segmentWidths.length - 1,
                         })}
                         style={{ width: `${width}%` }}
                     />
                 ))}
             </div>
-            <p className={clsx("text-xl text-gray-50", roboto.className)}>{`${progress}%`}</p>
+            <p
+                className={clsx(
+                    "text-base min-[390px]:text-xl sm:text-2xl text-gray-50",
+                    mono.className
+                )}
+            >{`${formattedProgress}% of the way to 2025!`}</p>
+            {/* <p
+                className={clsx("text-base min-[390px]:text-xl sm:text-2xl text-gray-50", mono.className)}
+            >{`2024 is ${formattedProgress}% completed!`}</p> */}
         </div>
     );
 }
