@@ -70,7 +70,7 @@ export default function Home() {
         let tempProgress = 50;
         return (
             <>
-                <div className="w-full max-w-[571px] flex flex-col gap-2 items-center justify-center">
+                {/* <div className="w-full max-w-[571px] flex flex-col gap-2 items-center justify-center">
                     <div className="bg-zinc-200 rounded p-0.5 w-full">
                         <div
                             className="h-7 bg-green-500 rounded-l-sm"
@@ -78,7 +78,9 @@ export default function Home() {
                         />
                     </div>
                     <p className="text-gray-50">{`${progress} %`}</p>
-                </div>
+                </div> */}
+                {/* <ProgressBar progress={progress} /> */}
+                <ProgressBar progress={tempProgress} />
                 <Countdown timeLeft={timeLeft} />
             </>
         );
@@ -199,6 +201,29 @@ function Countdown({ timeLeft }) {
                     )}
                 </span>
             )}
+        </div>
+    );
+}
+
+function ProgressBar({ progress }) {
+    return (
+        // // v1, simple styling
+        // <div className="w-11/12 max-w-[571px] flex flex-col gap-2 items-center justify-center">
+        //     <div className="bg-zinc-200 rounded p-0.5 w-full">
+        //         <div className="h-7 bg-green-500 rounded-l-sm" style={{ width: `${progress}%` }} />
+        //     </div>
+        //     <p className="text-gray-50">{`${progress} %`}</p>
+        // </div>
+
+        // v2, more complex styling
+        <div className="w-11/12 rounded-lg max-w-[571px] mx-auto">
+            <div className="bg-gray-600 p-0.5 rounded">
+                <div
+                    className="bg-green-500 h-7 rounded-sm"
+                    style={{ width: `${progress}%` }}
+                ></div>
+            </div>
+            <p className="text-green-500 text-xs mt-2 text-center">{progress}%</p>
         </div>
     );
 }
