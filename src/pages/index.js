@@ -7,7 +7,7 @@ import {
     customCountdownSetTimeLeft,
 } from "@/lib/utils";
 
-import { TIMEZONE, fireworksStyles, PROGRESSBAR_HIDE_THRESHOLD } from "@/lib/constants";
+import { fireworksStyles, PROGRESSBAR_HIDE_THRESHOLD } from "@/lib/constants";
 
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
@@ -19,13 +19,15 @@ const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
 const mono = PT_Mono({ weight: ["400"], subsets: ["latin"] });
 
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 export default function Home() {
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeftInYear(TIMEZONE));
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeftInYear(userTimeZone));
     const [isCelebration, setIsCelebration] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const [isCustomCountdown, setIsCustomCountdown] = useState(false);
 
-    const progress = calculatePercentProgressSoFar(TIMEZONE);
+    const progress = calculatePercentProgressSoFar(userTimeZone);
 
     // set isClient when client mounts
     // this is to handle hydration mismatch, workaround for now
@@ -37,7 +39,7 @@ export default function Home() {
         const timer = setInterval(() => {
             if (!isCustomCountdown) {
                 // if not a custom countdown, update timeLeft normally
-                const newTimeLeft = calculateTimeLeftInYear(TIMEZONE); // TODO: make timezone dynamic
+                const newTimeLeft = calculateTimeLeftInYear(userTimeZone); // TODO: make timezone dynamic
                 setTimeLeft(newTimeLeft);
 
                 // check if countdown is at zero and set isCelebration to true if it is

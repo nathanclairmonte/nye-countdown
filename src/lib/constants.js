@@ -1,5 +1,3 @@
-export const TIMEZONE = "America/New_York";
-
 export const fireworksStyles = {
     left: 0,
     top: 0,
