@@ -5,6 +5,7 @@ import {
     calculateTimeLeftInYear,
     calculatePercentProgressSoFar,
     customCountdownSetTimeLeft,
+    getNextYear,
 } from "@/lib/utils";
 
 import { fireworksStyles, PROGRESSBAR_HIDE_THRESHOLD } from "@/lib/constants";
@@ -261,7 +262,7 @@ function ProgressBar({ progress }) {
                     "text-base min-[390px]:text-xl sm:text-2xl text-gray-50",
                     mono.className
                 )}
-            >{`${formattedProgress}% of the way to 2025!`}</p>
+            >{`${formattedProgress}% of the way to ${getNextYear(userTimeZone)}!`}</p>
             {/* <p
                 className={clsx("text-base min-[390px]:text-xl sm:text-2xl text-gray-50", mono.className)}
             >{`2024 is ${formattedProgress}% completed!`}</p> */}

@@ -7,6 +7,11 @@ export function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
 
+// get the next year based on the user's timezone
+export function getNextYear(timeZone) {
+    return DateTime.local().setZone(timeZone).plus({ years: 1 }).year;
+}
+
 /**
  *
  * @param {string (IANA Timezone format)} timeZone
