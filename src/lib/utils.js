@@ -1,4 +1,11 @@
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { DateTime } from "luxon";
+
+// function to combine tailwind classes. inspired by shadcn.
+export function cn(...inputs) {
+    return twMerge(clsx(inputs));
+}
 
 /**
  *

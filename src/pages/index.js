@@ -7,11 +7,12 @@ import {
     customCountdownSetTimeLeft,
 } from "@/lib/utils";
 
-import { TIMEZONE, fireworksStyles } from "@/lib/constants";
+import { TIMEZONE, fireworksStyles, PROGRESSBAR_HIDE_THRESHOLD } from "@/lib/constants";
 
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
 import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import TestControls from "@/components/TestControls";
 
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
@@ -68,9 +69,14 @@ export default function Home() {
         }
 
         // render progress bar and countdown
+        const isProgressBarHidden =
+            timeLeft.months === 0 &&
+            timeLeft.days === 0 &&
+            timeLeft.hours === 0 &&
+            timeLeft.minutes < PROGRESSBAR_HIDE_THRESHOLD;
         return (
             <div className="relative w-full h-screen flex flex-col items-center justify-center">
-                <ProgressBar progress={progress} />
+                {!isProgressBarHidden && <ProgressBar progress={progress} />}
                 <Countdown timeLeft={timeLeft} />
             </div>
         );
@@ -136,10 +142,20 @@ const getCountdownStyles = (timeLeft) => {
 function Countdown({ timeLeft }) {
     const styleClass = getCountdownStyles(timeLeft);
 
+    const isProgressBarHidden =
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes < PROGRESSBAR_HIDE_THRESHOLD;
+
     // pluralize helper function
     const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
     return (
-        <div className={`${styleClass} ${gothic.className} absolute bottom-20`}>
+        <div
+            className={cn(styleClass, gothic.className, {
+                "absolute bottom-20": !isProgressBarHidden,
+            })}
+        >
             {timeLeft.months > 0 && (
                 <span>
                     {timeLeft.months} {pluralize(timeLeft.months, "month")}
