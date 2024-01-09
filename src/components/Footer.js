@@ -6,7 +6,7 @@ const Footer = (props) => {
     return (
         <footer
             className={clsx(
-                "mx-auto p-1 selection:bg-cyan-300 selection:text-cyan-900",
+                "z-[50] mx-auto p-1 selection:bg-cyan-300 selection:text-cyan-900",
                 props.className
             )}
         >
