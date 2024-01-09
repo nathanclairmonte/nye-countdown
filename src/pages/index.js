@@ -1,65 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { fireworksOptions } from "@/data/fireworksOptions";
-import { DotGothic16, Roboto } from "next/font/google";
-import { calculateTimeLeft } from "@/lib/utils";
+import { DotGothic16, Roboto, PT_Mono } from "next/font/google";
+import {
+    calculateTimeLeftInYear,
+    calculatePercentProgressSoFar,
+    customCountdownSetTimeLeft,
+    getNextYear,
+} from "@/lib/utils";
+
+import { fireworksStyles, PROGRESSBAR_HIDE_THRESHOLD } from "@/lib/constants";
 
 import Layout from "@/components/Layout";
 import { Fireworks } from "@fireworks-js/react";
 import clsx from "clsx";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
+import TestControls from "@/components/TestControls";
 
 const gothic = DotGothic16({ weight: ["400"], subsets: ["latin"] });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"] });
+const mono = PT_Mono({ weight: ["400"], subsets: ["latin"] });
 
-const NEW_YEAR_DATE = "2025-01-01T00:00:00";
-// const NEW_YEAR_DATE = "2023-12-31T18:28:00";
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function Home() {
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(NEW_YEAR_DATE));
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeftInYear(userTimeZone));
     const [isCelebration, setIsCelebration] = useState(false);
     const [isClient, setIsClient] = useState(false);
+    const [isCustomCountdown, setIsCustomCountdown] = useState(false);
 
-    const fireworksStyles = {
-        left: 0,
-        top: 0,
-        width: "100%",
-        height: "100%",
-        position: "fixed",
-    };
+    const progress = calculatePercentProgressSoFar(userTimeZone);
 
-    // useEffect to set isClient when client mounts
+    // set isClient when client mounts
+    // this is to handle hydration mismatch, workaround for now
     useEffect(() => {
         setIsClient(true);
     }, []);
 
-    // useEffect to update timeLeft every second
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setTimeLeft((prevTimeLeft) => {
+        const timer = setInterval(() => {
+            if (!isCustomCountdown) {
+                // if not a custom countdown, update timeLeft normally
+                const newTimeLeft = calculateTimeLeftInYear(userTimeZone); // TODO: make timezone dynamic
+                setTimeLeft(newTimeLeft);
+
+                // check if countdown is at zero and set isCelebration to true if it is
                 if (
-                    prevTimeLeft.seconds > 1 ||
-                    prevTimeLeft.minutes > 0 ||
-                    prevTimeLeft.hours > 0
+                    newTimeLeft.months === 0 &&
+                    newTimeLeft.days === 0 &&
+                    newTimeLeft.hours === 0 &&
+                    newTimeLeft.minutes === 0 &&
+                    newTimeLeft.seconds === 0
                 ) {
-                    const totalSeconds =
-                        prevTimeLeft.hours * 3600 +
-                        prevTimeLeft.minutes * 60 +
-                        prevTimeLeft.seconds -
-                        1;
-                    return {
-                        hours: Math.floor(totalSeconds / 3600),
-                        minutes: Math.floor((totalSeconds % 3600) / 60),
-                        seconds: totalSeconds % 60,
-                    };
-                } else {
                     setIsCelebration(true);
-                    return prevTimeLeft;
                 }
-            });
+            } else {
+                // handle updating timeLeft for custom countdown
+                customCountdownSetTimeLeft(setTimeLeft, setIsCelebration);
+            }
         }, 1000);
 
-        return () => clearTimeout(timer);
-    }, [timeLeft]);
+        return () => clearInterval(timer);
+    }, [isCustomCountdown]);
 
     const renderCountdown = () => {
         // don't render countdown if client hasn't mounted
@@ -67,53 +68,19 @@ export default function Home() {
 
         // render celebration if isCelebration is true
         if (isCelebration) {
-            return (
-                <div
-                    className={clsx(
-                        "animate-bounce text-3xl text-green-400 sm:text-5xl md:text-6xl lg:text-7xl",
-                        roboto.className
-                    )}
-                >
-                    Happy New Year!!! 🎉🎊
-                </div>
-            );
+            return <Celebration />;
         }
 
-        // styles for countdown rendering
-        let styleClass = "text-xl sm:text-3xl md:text-5xl text-gray-50";
-        if (timeLeft.hours === 0 && timeLeft.minutes > 0) {
-            styleClass = "text-3xl sm:text-5xl md:text-6xl text-gray-50";
-        } else if (timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds > 0) {
-            styleClass = "text-[12rem] sm:text-[14rem] md:text-[17rem] text-gray-50";
-        }
-
-        // pluralize helper function
-        const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
-
-        // render countdown
+        // render progress bar and countdown
+        const isProgressBarHidden =
+            timeLeft.months === 0 &&
+            timeLeft.days === 0 &&
+            timeLeft.hours === 0 &&
+            timeLeft.minutes < PROGRESSBAR_HIDE_THRESHOLD;
         return (
-            <div className={`countdown ${styleClass} ${gothic.className}`}>
-                {timeLeft.hours > 0 && (
-                    <span>
-                        {timeLeft.hours} {pluralize(timeLeft.hours, "hour")}{" "}
-                    </span>
-                )}
-                {timeLeft.minutes > 0 && (
-                    <span>
-                        {timeLeft.minutes} {pluralize(timeLeft.minutes, "minute")}{" "}
-                    </span>
-                )}
-                {timeLeft.seconds > 0 && (
-                    <span>
-                        {timeLeft.hours === 0 && timeLeft.minutes === 0 ? (
-                            <>{timeLeft.seconds}</>
-                        ) : (
-                            <>
-                                {timeLeft.seconds} {pluralize(timeLeft.seconds, "second")}
-                            </>
-                        )}
-                    </span>
-                )}
+            <div className="relative w-full h-screen flex flex-col items-center justify-center">
+                {!isProgressBarHidden && <ProgressBar progress={progress} />}
+                <Countdown timeLeft={timeLeft} />
             </div>
         );
     };
@@ -122,99 +89,183 @@ export default function Home() {
         <Layout>
             {isCelebration && <Fireworks options={fireworksOptions} style={fireworksStyles} />}
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
-                <ComingSoon />
-                {/* {renderCountdown()} */}
-                {/* <TestControls setTimeLeft={setTimeLeft} setIsCelebration={setIsCelebration} /> */}
+                {renderCountdown()}
+                {/* <TestControls
+                    setTimeLeft={setTimeLeft}
+                    setIsCelebration={setIsCelebration}
+                    setIsCustomCountdown={setIsCustomCountdown}
+                /> */}
             </div>
         </Layout>
     );
 }
 
-function ComingSoon() {
+function Celebration() {
     return (
-        <div className="w-full h-full border border-white gap-6 flex flex-col items-center justify-center">
-            <Image
-                src="/cat-sleeping.gif"
-                height={200}
-                width={200}
-                className="bg-zinc-200 rounded-full"
-            />
-            <h1 className={clsx("text-3xl text-zinc-200", gothic.className)}>Coming soon...</h1>
+        <div
+            className={clsx(
+                "animate-bounce text-3xl text-green-400 sm:text-5xl md:text-6xl lg:text-7xl",
+                roboto.className
+            )}
+        >
+            Happy New Year!!! 🎉🎊
         </div>
     );
 }
 
-function TestControls({ setTimeLeft, setIsCelebration }) {
-    const [customHours, setCustomHours] = useState(null);
-    const [customMinutes, setCustomMinutes] = useState(null);
-    const [customSeconds, setCustomSeconds] = useState(null);
+const getCountdownStyles = (timeLeft) => {
+    let styleClass =
+        "text-[0.6rem] min-[320px]:text-xs min-[377px]:text-sm sm:text-lg md:text-2xl text-gray-50 text-center";
+    if (timeLeft.months === 0 && timeLeft.days > 0) {
+        styleClass =
+            "text-xs min-[320px]:text-sm min-[390px]:text-base sm:text-lg md:text-xl text-gray-50";
+    } else if (timeLeft.months === 0 && timeLeft.days === 0 && timeLeft.hours > 0) {
+        styleClass =
+            "text-sm min-[320px]:text-base min-[390px]:text-xl sm:text-2xl md:text-3xl text-gray-50";
+    } else if (
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes > 0
+    ) {
+        styleClass = "text-xl min-[390px]:text-3xl sm:text-5xl md:text-6xl text-gray-50";
+    } else if (
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes === 0 &&
+        timeLeft.seconds > 0
+    ) {
+        styleClass = "text-[12rem] sm:text-[14rem] md:text-[17rem] text-gray-50";
+    }
 
-    const handleCustomTimeChange = () => {
-        setTimeLeft({
-            hours: parseInt(customHours, 10) || 0,
-            minutes: parseInt(customMinutes, 10) || 0,
-            seconds: parseInt(customSeconds, 10) || 0,
-        });
-        setIsCelebration(false);
+    return styleClass;
+};
+
+function Countdown({ timeLeft }) {
+    const styleClass = getCountdownStyles(timeLeft);
+
+    const isProgressBarHidden =
+        timeLeft.months === 0 &&
+        timeLeft.days === 0 &&
+        timeLeft.hours === 0 &&
+        timeLeft.minutes < PROGRESSBAR_HIDE_THRESHOLD;
+
+    // pluralize helper function
+    const pluralize = (count, singular) => (count === 1 ? singular : `${singular}s`);
+    return (
+        <div
+            className={cn(styleClass, gothic.className, {
+                "absolute bottom-20": !isProgressBarHidden,
+            })}
+        >
+            {timeLeft.months > 0 && (
+                <span>
+                    {timeLeft.months} {pluralize(timeLeft.months, "month")}
+                    {timeLeft.months > 0 &&
+                    timeLeft.days == 0 &&
+                    timeLeft.hours == 0 &&
+                    timeLeft.minutes == 0 &&
+                    timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.days > 0 && (
+                <span>
+                    {timeLeft.days} {pluralize(timeLeft.days, "day")}
+                    {timeLeft.days > 0 &&
+                    timeLeft.hours == 0 &&
+                    timeLeft.minutes == 0 &&
+                    timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.hours > 0 && (
+                <span>
+                    {timeLeft.hours} {pluralize(timeLeft.hours, "hour")}
+                    {timeLeft.hours > 0 && timeLeft.minutes == 0 && timeLeft.seconds == 0
+                        ? " "
+                        : ", "}
+                </span>
+            )}
+            {timeLeft.minutes > 0 && (
+                <span>
+                    {timeLeft.minutes} {pluralize(timeLeft.minutes, "minute")}
+                    {timeLeft.minutes > 0 && timeLeft.seconds == 0 ? " " : ", "}
+                </span>
+            )}
+            {timeLeft.seconds > 0 && (
+                <span>
+                    {timeLeft.months === 0 &&
+                    timeLeft.days === 0 &&
+                    timeLeft.hours === 0 &&
+                    timeLeft.minutes === 0 ? (
+                        <>{timeLeft.seconds}</>
+                    ) : (
+                        <>
+                            {timeLeft.seconds} {pluralize(timeLeft.seconds, "second")}
+                        </>
+                    )}
+                </span>
+            )}
+        </div>
+    );
+}
+
+function ProgressBar({ progress }) {
+    const segmentCount = 20;
+    const gapWidth = 0.35; // ml-0.5 equates to about 0.35% width
+    const totalGapWidth = gapWidth * (segmentCount - 1);
+    const availableWidth = 100 - totalGapWidth;
+    const segmentWidth = availableWidth / segmentCount;
+
+    // function to calculate segment widths
+    const getSegmentWidths = () => {
+        let widths = [];
+        let accumulatedWidth = 0;
+
+        for (let i = 0; i < segmentCount; i++) {
+            let width = segmentWidth;
+            if (accumulatedWidth + width > progress) {
+                width = progress - accumulatedWidth;
+            }
+            widths.push(width);
+            accumulatedWidth += width + gapWidth;
+            if (accumulatedWidth >= progress) break;
+        }
+
+        return widths;
     };
 
-    const resetToLiveCountdown = () => {
-        setTimeLeft(calculateTimeLeft(NEW_YEAR_DATE));
-        setIsCelebration(false);
-        setCustomHours(null);
-        setCustomMinutes(null);
-        setCustomSeconds(null);
-    };
+    const segmentWidths = getSegmentWidths();
+    const formattedProgress = parseFloat(progress).toFixed(1);
 
     return (
-        <>
-            <div>
-                <input
-                    type="number"
-                    className="mr-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
-                    placeholder="Hours"
-                    value={customHours}
-                    onChange={(e) => setCustomHours(e.target.value)}
-                />
-                <input
-                    type="number"
-                    className="mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
-                    placeholder="Minutes"
-                    value={customMinutes}
-                    onChange={(e) => setCustomMinutes(e.target.value)}
-                />
-                <input
-                    type="number"
-                    className="ml-2 mt-4 w-20 rounded border border-gray-600 bg-gray-700 p-2 text-white"
-                    placeholder="Seconds"
-                    value={customSeconds}
-                    onChange={(e) => setCustomSeconds(e.target.value)}
-                />
-                <button
-                    className="ml-4 mt-4 rounded bg-blue-500 px-4 py-2 text-xl text-white"
-                    onClick={handleCustomTimeChange}
-                >
-                    Start Custom Countdown
-                </button>
+        <div className="w-[95%] max-w-[571px] flex flex-col gap-3 items-center justify-center">
+            <div className="bg-gray-600 rounded p-0.5 w-full flex">
+                {segmentWidths.map((width, index) => (
+                    <div
+                        key={index}
+                        className={clsx("h-7 opacity-90 bg-green-500 rounded-[1px]", {
+                            "ml-0.5": index > 0,
+                            "rounded-l-sm": index === 0,
+                            "rounded-r-sm": index === segmentWidths.length - 1,
+                        })}
+                        style={{ width: `${width}%` }}
+                    />
+                ))}
             </div>
-            <button
-                className="mt-4 rounded bg-green-500 px-4 py-2 text-xl text-white"
-                onClick={resetToLiveCountdown}
-            >
-                Reset to Live Countdown
-            </button>
-            <button
-                className="mt-4 rounded bg-green-500 px-4 py-2 text-xl text-white"
-                onClick={() => setIsCelebration(true)}
-            >
-                Start Fireworks
-            </button>
-            <button
-                className="mt-4 rounded bg-red-500 px-4 py-2 text-xl text-white"
-                onClick={() => setIsCelebration(false)}
-            >
-                Stop Fireworks
-            </button>
-        </>
+            <p
+                className={clsx(
+                    "text-base min-[390px]:text-xl sm:text-2xl text-gray-50",
+                    mono.className
+                )}
+            >{`${formattedProgress}% of the way to ${getNextYear(userTimeZone)}!`}</p>
+            {/* <p
+                className={clsx("text-base min-[390px]:text-xl sm:text-2xl text-gray-50", mono.className)}
+            >{`2024 is ${formattedProgress}% completed!`}</p> */}
+        </div>
     );
 }
