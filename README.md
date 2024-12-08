@@ -1,5 +1,5 @@
 # NYE Countdown!
 
-A very simple website that just displays a countdown to the next year and a "Happy New Year" message once it reaches zero.
+A simple website that displays a countdown to the new year along with a "Happy New Year" message once it reaches zero. Also displays a progress bar showing the percentage of the year that has passed.
 
-Built using Next.js just for easy deployment with Vercel.
+Built using Next.js for easy deployment with Vercel.
