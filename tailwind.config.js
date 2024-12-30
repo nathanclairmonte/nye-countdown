@@ -14,6 +14,7 @@ module.exports = {
             },
             colors: {
                 "primary-orange": "#f08057",
+                muted: "#404040",
             },
         },
     },
