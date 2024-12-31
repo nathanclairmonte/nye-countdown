@@ -265,9 +265,6 @@ function ProgressBar({ progress }) {
             >{`${formattedProgress}% of the way to ${getNextYear(
                 userTimeZone
             )}!`}</p>
-            {/* <p
-                className={clsx("text-base min-[390px]:text-xl sm:text-2xl text-gray-50", mono.className)}
-            >{`2024 is ${formattedProgress}% completed!`}</p> */}
         </div>
     );
 }
