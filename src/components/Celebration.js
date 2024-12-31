@@ -25,7 +25,7 @@ export default function Celebration({ isCelebration }) {
                 </div>
                 <div
                     className={clsx(
-                        "animate-scale-in-2 opacity-0 mt-5",
+                        "animate-scale-in-2 opacity-0 mt-3",
                         font.className
                     )}
                 >
