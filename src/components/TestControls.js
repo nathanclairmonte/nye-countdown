@@ -59,7 +59,7 @@ export default function TestControls({
             {/* Toggle button */}
             <button
                 onClick={() => setIsVisible(!isVisible)}
-                className="ml-auto mb-2 rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600 transition-colors"
+                className="ml-auto mb-2 rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600 transition-colors opacity-0 hover:opacity-100"
             >
                 {isVisible ? "❌" : "⚙️"}
             </button>

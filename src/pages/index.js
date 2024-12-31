@@ -89,11 +89,11 @@ export default function Home() {
         <Layout>
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
                 {renderCountdown()}
-                {/* <TestControls
+                <TestControls
                     setTimeLeft={setTimeLeft}
                     setIsCelebration={setIsCelebration}
                     setIsCustomCountdown={setIsCustomCountdown}
-                /> */}
+                />
             </div>
         </Layout>
     );
