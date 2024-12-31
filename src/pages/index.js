@@ -246,8 +246,25 @@ function ProgressBar({ progress }) {
         return widths;
     };
 
+    // format progress value
+    // adds more decimal places when progress is close to 100
+    // caps at 99.999
+    const formatProgress = (progress) => {
+        if (progress >= 99.9995) {
+            return "99.999";
+        }
+        if (progress >= 99.995) {
+            return progress.toFixed(3); // e.g., "99.998"
+        }
+        if (progress >= 99.95) {
+            return progress.toFixed(2); // e.g., "99.97"
+        }
+        // default to 1 decimal place
+        return progress.toFixed(1); // e.g., "87.3"
+    };
+
     const segmentWidths = getSegmentWidths();
-    const formattedProgress = parseFloat(progress).toFixed(1);
+    const formattedProgress = formatProgress(progress);
 
     return (
         <div className="w-[95%] max-w-[571px] flex flex-col gap-3 items-center justify-center">
