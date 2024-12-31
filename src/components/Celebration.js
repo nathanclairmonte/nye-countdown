@@ -14,7 +14,7 @@ export default function Celebration({ isCelebration }) {
                 <Fireworks options={fireworksOptions} style={fireworksStyles} />
             )}
             {isCelebration && <Confetti />}
-            <div className="flex flex-col items-center gap-2 text-7xl text-white sm:text-8xl md:text-8xl lg:text-8xl">
+            <div className="flex flex-col items-center gap-2 text-7xl text-white sm:text-8xl md:text-8xl lg:text-8xl p-5 -m-5">
                 <div
                     className={clsx(
                         "animate-scale-in-1 opacity-0",
