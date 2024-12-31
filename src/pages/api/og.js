@@ -8,6 +8,11 @@ export default async function handler(req) {
     const { searchParams } = new URL(req.url);
     const progress = parseFloat(searchParams.get("progress") || "0");
 
+    // Load font from public directory
+    const fontData = await fetch(
+        new URL("/fonts/PTMono-Regular.ttf", req.url)
+    ).then((res) => res.arrayBuffer());
+
     // Calculate segments similar to ProgressBar component
     const segmentCount = 20;
     const gapWidth = 0.35;
@@ -47,7 +52,7 @@ export default async function handler(req) {
             >
                 <div
                     style={{
-                        width: "60%",
+                        width: "70%",
                         background: "#4B5563",
                         borderRadius: "4px",
                         padding: "2px",
@@ -82,7 +87,7 @@ export default async function handler(req) {
                     style={{
                         fontSize: 48,
                         color: "white",
-                        fontFamily: "monospace",
+                        fontFamily: "PT Mono",
                         display: "flex",
                     }}
                 >
@@ -94,6 +99,14 @@ export default async function handler(req) {
         {
             width: 1200,
             height: 630,
+            fonts: [
+                {
+                    name: "PT Mono",
+                    data: fontData,
+                    weight: 400,
+                    style: "normal",
+                },
+            ],
         }
     );
 }
