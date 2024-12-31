@@ -13,39 +13,36 @@ const Layout = ({ children, ogProgress, ...customMeta }) => {
         }!`,
         image: `https://www.nyecount.com/api/og?progress=${ogProgress}`,
         type: "website",
+        domain: "nyecount.com",
+        url: `https://www.nyecount.com${router.asPath}`,
         ...customMeta,
     };
 
     return (
         <div>
             <Head>
+                {/* General Meta Tags */}
                 <title>{meta.title}</title>
+                <link rel="canonical" href={meta.url} />
                 <meta name="robots" content="follow, index" />
-                <meta content={meta.description} name="description" />
-                <meta
-                    property="og:url"
-                    content={`https://www.nyecount.com${router.asPath}`}
-                />
-                <link
-                    rel="canonical"
-                    href={`https://www.nyecount.com${router.asPath}`}
-                />
+                <meta name="description" content={meta.description} />
+
+                {/* Facebook Meta Tags */}
+                <meta property="og:url" content={meta.url} />
                 <meta property="og:type" content={meta.type} />
                 <meta property="og:site_name" content="NYE Countdown" />
                 <meta property="og:description" content={meta.description} />
                 <meta property="og:title" content={meta.title} />
                 <meta property="og:image" content={meta.image} />
+
+                {/* Twitter Meta Tags */}
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:site" content="@cIairmonte" />
+                <meta name="twitter:site" content="@natepoasts" />
+                <meta property="twitter:domain" content={meta.domain} />
+                <meta property="twitter:url" content={meta.url} />
                 <meta name="twitter:title" content={meta.title} />
                 <meta name="twitter:description" content={meta.description} />
                 <meta name="twitter:image" content={meta.image} />
-                {meta.date && (
-                    <meta
-                        property="article:published_time"
-                        content={meta.date}
-                    />
-                )}
             </Head>
             <main
                 className="flex h-dvh w-full flex-col justify-between bg-black"
