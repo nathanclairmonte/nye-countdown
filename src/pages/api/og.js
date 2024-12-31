@@ -6,7 +6,7 @@ export const config = {
 
 export default async function handler(req) {
     const { searchParams } = new URL(req.url);
-    const progress = parseFloat(searchParams.get("progress") || "0");
+    const progress = parseFloat(searchParams.get("progress") || "50");
 
     // Load font from public directory
     const fontData = await fetch(

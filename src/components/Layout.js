@@ -19,7 +19,7 @@ const Layout = ({ children, ...customMeta }) => {
         description: `${progress.toFixed(1)}% of the way to ${
             new Date().getFullYear() + 1
         }!`,
-        image: `/api/og?progress=${progress}`,
+        image: `https://www.nyecount.com/api/og?progress=${progress}`,
         type: "website",
         ...customMeta,
     };
