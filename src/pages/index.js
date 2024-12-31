@@ -40,7 +40,7 @@ export default function Home() {
         const timer = setInterval(() => {
             if (!isCustomCountdown) {
                 // if not a custom countdown, update timeLeft normally
-                const newTimeLeft = calculateTimeLeftInYear(userTimeZone); // TODO: make timezone dynamic
+                const newTimeLeft = calculateTimeLeftInYear(userTimeZone);
                 setTimeLeft(newTimeLeft);
 
                 // check if countdown is at zero and set isCelebration to true if it is
@@ -89,11 +89,11 @@ export default function Home() {
         <Layout>
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
                 {renderCountdown()}
-                {/* <TestControls
+                <TestControls
                     setTimeLeft={setTimeLeft}
                     setIsCelebration={setIsCelebration}
                     setIsCustomCountdown={setIsCustomCountdown}
-                /> */}
+                />
             </div>
         </Layout>
     );
