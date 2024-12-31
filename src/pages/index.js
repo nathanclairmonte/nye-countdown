@@ -20,7 +20,18 @@ const mono = PT_Mono({ weight: ["400"], subsets: ["latin"] });
 
 const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export default function Home() {
+export async function getServerSideProps() {
+    // Use UTC as default for initial render of open graph image
+    const progress = calculatePercentProgressSoFar("UTC");
+
+    return {
+        props: {
+            ogProgress: progress,
+        },
+    };
+}
+
+export default function Home({ ogProgress }) {
     const [timeLeft, setTimeLeft] = useState(
         calculateTimeLeftInYear(userTimeZone)
     );
@@ -86,7 +97,7 @@ export default function Home() {
     };
 
     return (
-        <Layout>
+        <Layout ogProgress={ogProgress}>
             <div className="absolute z-[50] flex h-full w-full flex-col items-center justify-center">
                 {renderCountdown()}
                 {/* <TestControls

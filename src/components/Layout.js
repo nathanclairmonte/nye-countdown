@@ -1,25 +1,17 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 import Footer from "@/components/Footer";
-import { calculatePercentProgressSoFar } from "@/lib/utils";
 
-const Layout = ({ children, ...customMeta }) => {
+const Layout = ({ children, ogProgress, ...customMeta }) => {
     const router = useRouter();
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        setProgress(calculatePercentProgressSoFar(userTimeZone));
-    }, []);
 
     const meta = {
         title: "NYE Countdown",
-        description: `${progress.toFixed(1)}% of the way to ${
+        description: `${ogProgress.toFixed(1)}% of the way to ${
             new Date().getFullYear() + 1
         }!`,
-        image: `https://www.nyecount.com/api/og?progress=${progress}`,
+        image: `https://www.nyecount.com/api/og?progress=${ogProgress}`,
         type: "website",
         ...customMeta,
     };
