@@ -16,6 +16,29 @@ module.exports = {
                 "primary-orange": "#f08057",
                 muted: "#404040",
             },
+            keyframes: {
+                "scale-in": {
+                    "0%": { transform: "scale(0)", opacity: "0" },
+                    "100%": { transform: "scale(1)", opacity: "1" },
+                },
+                "bounce-all": {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "50%": { transform: "translateY(-25%)" },
+                },
+                "fade-in": {
+                    "0%": { opacity: "0" },
+                    "100%": { opacity: "1" },
+                },
+            },
+            animation: {
+                "scale-in-1":
+                    "scale-in 0.5s ease-out forwards, bounce-all 1s ease-in-out 1.5s infinite",
+                "scale-in-2":
+                    "scale-in 0.5s ease-out 0.5s forwards, bounce-all 1s ease-in-out 1.5s infinite",
+                "scale-in-3":
+                    "scale-in 0.5s ease-out 1s forwards, bounce-all 1s ease-in-out 1.5s infinite",
+                "fade-in": "fade-in 0.2s ease-out forwards",
+            },
         },
     },
     plugins: [],
