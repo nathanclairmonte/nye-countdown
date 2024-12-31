@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BsTwitterX } from "react-icons/bs";
+import { BsTwitterX, BsGithub } from "react-icons/bs";
 import clsx from "clsx";
 
 const Footer = (props) => {
@@ -14,7 +14,7 @@ const Footer = (props) => {
                 <div className="text-xs flex items-center gap-1">
                     <p className="text-muted">Made by </p>
                     <Link
-                        href="https://x.com/natepoasts"
+                        href="https://www.n4than.com/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs opacity-50 hover:opacity-100 transition-opacity"
@@ -24,13 +24,20 @@ const Footer = (props) => {
                 </div>
 
                 <div className="flex items-center gap-2 md:mt-0 mr-0.5">
-                    <Link
+                    {/* <Link
+                        href="https://github.com/nathanclairmonte"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <BsGithub className="text-sm font-normal hover:cursor-pointer opacity-50 hover:opacity-100 transition-opacity" />
+                    </Link> */}
+                    {/* <Link
                         href="https://x.com/natepoasts"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
                         <BsTwitterX className="text-sm font-normal hover:cursor-pointer opacity-50 hover:opacity-100 transition-opacity" />
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </footer>
