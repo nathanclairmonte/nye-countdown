@@ -4,7 +4,7 @@ import Crossfire from "react-canvas-confetti/dist/presets/crossfire";
 function Confetti() {
     return (
         <>
-            <Fireworks autorun={{ speed: 1 }} />
+            {/* <Fireworks autorun={{ speed: 1 }} /> */}
             <Crossfire autorun={{ speed: 1 }} />
         </>
     );
