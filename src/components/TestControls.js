@@ -2,6 +2,7 @@ import { useState } from "react";
 import { calculateTimeLeftInYear } from "@/lib/utils";
 import { TIMEZONE } from "@/lib/constants";
 import { DateTime } from "luxon";
+import { cn } from "@/lib/utils";
 
 export default function TestControls({
     setTimeLeft,
@@ -59,7 +60,10 @@ export default function TestControls({
             {/* Toggle button */}
             <button
                 onClick={() => setIsVisible(!isVisible)}
-                className="ml-auto mb-2 rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600 transition-colors"
+                className={cn(
+                    "ml-auto mb-2 rounded-full bg-gray-700 p-2 text-white hover:bg-gray-600 transition-colors",
+                    !isVisible && "opacity-0 hover:opacity-100"
+                )}
             >
                 {isVisible ? "❌" : "⚙️"}
             </button>
